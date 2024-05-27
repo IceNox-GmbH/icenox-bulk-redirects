@@ -206,7 +206,7 @@ class IceNoxBulkRedirects
     public function enabledStatusCheckbox()
     {
         $enabled = $this->enabled; ?>
-        <label class="input-label sr-only" for="icenox-bulk-redirects-enabled">URL</label>
+        <label class="input-label sr-only" for="icenox-bulk-redirects-enabled">Enabled</label>
         <input id="icenox-bulk-redirects-enabled" name="icenox_bulk_redirects_enabled" type="checkbox" <?= $enabled ? "checked" : "" ?>>
         <?php
     }
