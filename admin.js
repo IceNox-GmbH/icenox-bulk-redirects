@@ -16,7 +16,7 @@ const removeAddedPathByKey = (key, wpnonce) => {
       "option_page": "icenox_redirects_option_group",
       "action": "update",
       "icenox_bulk_redirects_remove_path": key,
-      "_wpnonce": document.querySelector(".bulk-redirects-form input[name=_wpnonce]").value,
+      "_wpnonce": wpnonce ?? document.querySelector(".bulk-redirects-form input[name=_wpnonce]").value,
       "_wp_http_referer": document.location.pathname + document.location.search
    };
 
