@@ -18,7 +18,7 @@ class IceNoxBulkRedirects {
 	public function __construct() {
 		$this->enabled      = get_option( 'icenox_bulk_redirects_enabled' ) === "on";
 		$this->redirect_url = get_option( 'icenox_bulk_redirects_url' );
-		$this->path_list    = get_option( 'icenox_bulk_redirects_path_list' ) ?: [];
+		$this->path_list    = json_decode( get_option( 'icenox_bulk_redirects_path_list' ), true ) ?: [];
 
 		if ( is_admin() ) {
 			add_action( 'admin_enqueue_scripts', function () {
@@ -173,7 +173,7 @@ class IceNoxBulkRedirects {
 			'icenox_redirects_option_group', // option_group
 			'icenox_bulk_redirects_path_list', // option_name
 			[
-				'type'              => 'array',
+				'type'              => 'string',
 				'sanitize_callback' => [ $this, "add_new_path_callback" ],
 				'default'           => []
 			]
@@ -199,15 +199,21 @@ class IceNoxBulkRedirects {
 	}
 
 	public function enabled_status_checkbox(): void {
-		$enabled = $this->enabled; ?>
+		$enabled = $this->enabled;
+        ?>
         <label class="input-label sr-only" for="icenox-bulk-redirects-enabled">Enabled</label>
+        <?php if ( empty( $this->redirect_url ) || empty( $this->path_list ) ): ?>
+        <input id="icenox-bulk-redirects-enabled" name="icenox_bulk_redirects_enabled" type="hidden" value="off">
+        <div class="disabled-note">Can be enabled once the Redirect URL and at least one Path has been added.</div>
+        <?php else: ?>
         <input id="icenox-bulk-redirects-enabled" name="icenox_bulk_redirects_enabled"
-               type="checkbox" <?php echo $enabled ? "checked" : ""; ?>>
-		<?php
+               type="checkbox" value="on" <?php echo $enabled ? "checked" : ""; ?>>
+		<?php endif;
 	}
 
 	public function redirect_url_input(): void {
-		$redirectUrl = $this->redirect_url; ?>
+		$redirectUrl = $this->redirect_url;
+        ?>
         <label class="input-label sr-only" for="icenox-bulk-redirects-url">URL</label>
         <input id="icenox-bulk-redirects-url" name="icenox_bulk_redirects_url" type="url" value="<?php echo $redirectUrl; ?>">
 		<?php
@@ -233,7 +239,7 @@ class IceNoxBulkRedirects {
 		}
 	}
 
-	public function add_new_path_callback( $value ): array {
+	public function add_new_path_callback( $value ): string {
 		$pathList = $this->path_list;
 
 		if ( is_string( $value ) && str_starts_with( $value, "/" ) ) {
@@ -247,7 +253,7 @@ class IceNoxBulkRedirects {
 			}
 		}
 
-		return $pathList;
+		return json_encode((object) $pathList);
 	}
 
 	public function remove_path_callback( $value ): string {
