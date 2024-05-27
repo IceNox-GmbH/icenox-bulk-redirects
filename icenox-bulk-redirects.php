@@ -274,36 +274,3 @@ class IceNoxBulkRedirects
 }
 
 $icenoxBulkRedirects = new IceNoxBulkRedirects();
-
-/*
-function doCnDRedirects() {
-    $redirectUrl = "https://criminalmodz.com/cnd-notice/";
-    
-    $pathList = [
-        "/xbox-series-x-modded-accounts/",
-        "/xbox-xs-account-boost/",
-        "/account-boost/",
-        "/account-boost-ps5/",
-        "/account-boost-ps4/",
-        "/modded-accounts-pc/",
-        "/modded-outfits-pc/",
-        "/modded-outfits-ps4/",
-        "/modded-packages/",
-        "/ps4-modded-accounts/",
-        "/ps4-modded-combos/",
-        "/ps4-modded-packages/",
-        "/ps5-modded-accounts/",
-        "/xbox-one-modded-packages/",
-        "/xbox-one-cash-drops/",
-        "/xbox-one-modded-accounts/"
-    ];
-
-    $currentPath = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
-    if(in_array($currentPath, $pathList)) {
-        http_response_code(302);
-        header("Location: " . $redirectUrl);
-    }
-}
-
-doCnDRedirects();
-*/
