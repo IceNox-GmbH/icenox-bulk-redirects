@@ -16,7 +16,12 @@ class IceNoxBulkRedirects {
 	private string $redirect_url;
 	private array $path_list;
 
-    private array $status_code_options = [301, 302, 307, 308];
+    private array $status_code_options = [
+        301 => 'Moved Permanently',
+        302 => 'Moved Temporarily',
+        307 => 'Temporary Redirect',
+        308 => 'Permanent Redirect',
+    ];
 
 	public function __construct() {
 		$this->enabled      = get_option( 'icenox_bulk_redirects_enabled' ) === "on";
@@ -239,9 +244,9 @@ class IceNoxBulkRedirects {
         <label class="input-label sr-only" for="icenox-bulk-redirects-status-code">Status Code</label>
         <select id="icenox-bulk-redirects-status-code" name="icenox_bulk_redirects_status_code">
             <?php
-            foreach ($this->status_code_options as $status_code) {
+            foreach ($this->status_code_options as $status_code => $description) {
                 if($this->status_code === $status_code) {
-	                echo '<option value="' . $status_code . '" selected>' . $status_code . '</option>';
+	                echo '<option value="' . $status_code . '" selected>' . $status_code . ' (' . $description . ')</option>';
                 } else {
 	                echo '<option value="' . $status_code . '">' . $status_code . '</option>';
                 }
