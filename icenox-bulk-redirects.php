@@ -17,10 +17,10 @@ class IceNoxBulkRedirects {
 	private array $path_list;
 
     private array $status_code_options = [
-        301 => 'Moved Permanently',
-        302 => 'Moved Temporarily',
-        307 => 'Temporary Redirect',
-        308 => 'Permanent Redirect',
+        301 => "Moved Permanently",
+        302 => "Moved Temporarily",
+        307 => "Temporary Redirect",
+        308 => "Permanent Redirect",
     ];
 
 	public function __construct() {
@@ -239,7 +239,6 @@ class IceNoxBulkRedirects {
 	}
 
 	public function status_code_selection(): void {
-		$redirectUrl = $this->redirect_url;
         ?>
         <label class="input-label sr-only" for="icenox-bulk-redirects-status-code">Status Code</label>
         <select id="icenox-bulk-redirects-status-code" name="icenox_bulk_redirects_status_code">
@@ -248,7 +247,7 @@ class IceNoxBulkRedirects {
                 if($this->status_code === $status_code) {
 	                echo '<option value="' . $status_code . '" selected>' . $status_code . ' (' . $description . ')</option>';
                 } else {
-	                echo '<option value="' . $status_code . '">' . $status_code . '</option>';
+	                echo '<option value="' . $status_code . '">' . $status_code . ' (' . $description . ')</option>';
                 }
             }
             ?>
@@ -284,9 +283,10 @@ class IceNoxBulkRedirects {
 		}
 	}
 
-	public function status_code_callback( $value ): string {
+	public function status_code_callback( $value ): int {
 		if ( isset( $value ) ) {
-			return in_array($value, $this->status_code_options) ? $value : 302;
+            $statusCode = (int) $value;
+			return in_array($statusCode, $this->status_code_options) ? $statusCode : 302;
 		} else {
 			return $this->status_code;
 		}
