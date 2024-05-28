@@ -12,20 +12,20 @@
 
 class IceNoxBulkRedirects {
 	private bool $enabled;
-    private int $status_code;
+	private int $status_code;
 	private string $redirect_url;
 	private array $path_list;
 
-    private array $status_code_options = [
-        301 => "Moved Permanently",
-        302 => "Moved Temporarily",
-        307 => "Temporary Redirect",
-        308 => "Permanent Redirect",
-    ];
+	private array $status_code_options = [
+		301 => "Moved Permanently",
+		302 => "Moved Temporarily",
+		307 => "Temporary Redirect",
+		308 => "Permanent Redirect",
+	];
 
 	public function __construct() {
 		$this->enabled      = get_option( 'icenox_bulk_redirects_enabled' ) === "on";
-        $this->status_code  = get_option( 'icenox_bulk_redirects_status_code' ) ?: 302;
+		$this->status_code  = get_option( 'icenox_bulk_redirects_status_code' ) ?: 302;
 		$this->redirect_url = get_option( 'icenox_bulk_redirects_url' );
 		$this->path_list    = json_decode( get_option( 'icenox_bulk_redirects_path_list' ), true ) ?: [];
 
@@ -227,39 +227,40 @@ class IceNoxBulkRedirects {
 
 	public function enabled_status_checkbox(): void {
 		$enabled = $this->enabled;
-        ?>
+		?>
         <label class="input-label sr-only" for="icenox-bulk-redirects-enabled">Enabled</label>
-        <?php if ( empty( $this->redirect_url ) || empty( $this->path_list ) ): ?>
-        <input id="icenox-bulk-redirects-enabled" name="icenox_bulk_redirects_enabled" type="hidden" value="off">
-        <div class="disabled-note">Can be enabled once the Redirect URL and at least one Path has been added.</div>
-        <?php else: ?>
-        <input id="icenox-bulk-redirects-enabled" name="icenox_bulk_redirects_enabled"
-               type="checkbox" value="on" <?php echo $enabled ? "checked" : ""; ?>>
+		<?php if ( empty( $this->redirect_url ) || empty( $this->path_list ) ): ?>
+            <input id="icenox-bulk-redirects-enabled" name="icenox_bulk_redirects_enabled" type="hidden" value="off">
+            <div class="disabled-note">Can be enabled once the Redirect URL and at least one Path has been added.</div>
+		<?php else: ?>
+            <input id="icenox-bulk-redirects-enabled" name="icenox_bulk_redirects_enabled"
+                   type="checkbox" value="on" <?php echo $enabled ? "checked" : ""; ?>>
 		<?php endif;
 	}
 
 	public function status_code_selection(): void {
-        ?>
+		?>
         <label class="input-label sr-only" for="icenox-bulk-redirects-status-code">Status Code</label>
         <select id="icenox-bulk-redirects-status-code" name="icenox_bulk_redirects_status_code">
-            <?php
-            foreach ($this->status_code_options as $status_code => $description) {
-                if($this->status_code === $status_code) {
-	                echo '<option value="' . $status_code . '" selected>' . $status_code . ' (' . $description . ')</option>';
-                } else {
-	                echo '<option value="' . $status_code . '">' . $status_code . ' (' . $description . ')</option>';
-                }
-            }
-            ?>
+			<?php
+			foreach ( $this->status_code_options as $status_code => $description ) {
+				if ( $this->status_code === $status_code ) {
+					echo '<option value="' . $status_code . '" selected>' . $status_code . ' (' . $description . ')</option>';
+				} else {
+					echo '<option value="' . $status_code . '">' . $status_code . ' (' . $description . ')</option>';
+				}
+			}
+			?>
         </select>
 		<?php
 	}
 
 	public function redirect_url_input(): void {
 		$redirectUrl = $this->redirect_url;
-        ?>
+		?>
         <label class="input-label sr-only" for="icenox-bulk-redirects-url">URL</label>
-        <input id="icenox-bulk-redirects-url" name="icenox_bulk_redirects_url" type="url" value="<?php echo $redirectUrl; ?>">
+        <input id="icenox-bulk-redirects-url" name="icenox_bulk_redirects_url" type="url"
+               value="<?php echo $redirectUrl; ?>">
 		<?php
 	}
 
@@ -285,8 +286,7 @@ class IceNoxBulkRedirects {
 
 	public function status_code_callback( $value ): int {
 		if ( isset( $value ) ) {
-            $statusCode = (int) $value;
-			return in_array($statusCode, $this->status_code_options) ? $statusCode : 302;
+			return in_array( $value, array_keys( $this->status_code_options ) ) ? $value : 302;
 		} else {
 			return $this->status_code;
 		}
@@ -306,7 +306,7 @@ class IceNoxBulkRedirects {
 			}
 		}
 
-		return json_encode((object) $pathList);
+		return json_encode( (object) $pathList );
 	}
 
 	public function remove_path_callback( $value ): string {
