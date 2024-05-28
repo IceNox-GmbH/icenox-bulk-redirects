@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: IceNox Bulk Redirects
- * Description: Redirect multiple pages to a single page
- * Version: 2.0
+ * Description: Redirect multiple pages to a single page.
+ * Version: 2.1
  * Requires at least: 6.2
  * Requires PHP: 8.0
  * Author: IceNox GmbH
@@ -12,11 +12,15 @@
 
 class IceNoxBulkRedirects {
 	private bool $enabled;
+    private int $status_code;
 	private string $redirect_url;
 	private array $path_list;
 
+    private array $status_code_options = [301, 302, 307, 308];
+
 	public function __construct() {
 		$this->enabled      = get_option( 'icenox_bulk_redirects_enabled' ) === "on";
+        $this->status_code  = get_option( 'icenox_bulk_redirects_status_code' ) ?: 302;
 		$this->redirect_url = get_option( 'icenox_bulk_redirects_url' );
 		$this->path_list    = json_decode( get_option( 'icenox_bulk_redirects_path_list' ), true ) ?: [];
 
@@ -56,7 +60,7 @@ class IceNoxBulkRedirects {
 
 		$currentPath = parse_url( $_SERVER["REQUEST_URI"], PHP_URL_PATH );
 		if ( in_array( $currentPath, $this->path_list ) || in_array( $currentPath . "/", $this->path_list ) ) {
-			header( "Location: " . $this->redirect_url, true, 302 );
+			header( "Location: " . $this->redirect_url, true, $this->status_code );
 			exit();
 		}
 	}
@@ -120,10 +124,10 @@ class IceNoxBulkRedirects {
 
 	public function settings_page_init(): void {
 		add_settings_section(
-			'icenox_redirects_settings_section', // id
-			'Settings', // title
-			'', // callback
-			'icenox-redirects-admin', // page
+			'icenox_redirects_settings_section',
+			'Settings',
+			'',
+			'icenox-redirects-admin',
 			[
 				'before_section' => '<section class="%s">',
 				'after_section'  => '</section>',
@@ -132,8 +136,8 @@ class IceNoxBulkRedirects {
 		);
 
 		register_setting(
-			'icenox_redirects_option_group', // option_group
-			'icenox_bulk_redirects_enabled', // option_name
+			'icenox_redirects_option_group',
+			'icenox_bulk_redirects_enabled',
 			[
 				'type'              => 'string',
 				'sanitize_callback' => function ( $value ) {
@@ -147,13 +151,31 @@ class IceNoxBulkRedirects {
 			"enabled-status",
 			"Enabled",
 			[ $this, 'enabled_status_checkbox' ],
-			'icenox-redirects-admin', // page
-			'icenox_redirects_settings_section' //section
+			'icenox-redirects-admin',
+			'icenox_redirects_settings_section'
 		);
 
 		register_setting(
-			'icenox_redirects_option_group', // option_group
-			'icenox_bulk_redirects_url', // option_name
+			'icenox_redirects_option_group',
+			'icenox_bulk_redirects_status_code',
+			[
+				'type'              => 'int',
+				'sanitize_callback' => [ $this, "status_code_callback" ],
+				'default'           => 302
+			]
+		);
+
+		add_settings_field(
+			"status-code",
+			"Status Code",
+			[ $this, 'status_code_selection' ],
+			'icenox-redirects-admin',
+			'icenox_redirects_settings_section'
+		);
+
+		register_setting(
+			'icenox_redirects_option_group',
+			'icenox_bulk_redirects_url',
 			[
 				'type'              => 'string',
 				'sanitize_callback' => [ $this, "redirect_url_callback" ],
@@ -165,13 +187,13 @@ class IceNoxBulkRedirects {
 			"redirect-url",
 			"Redirect URL",
 			[ $this, 'redirect_url_input' ],
-			'icenox-redirects-admin', // page
-			'icenox_redirects_settings_section' //section
+			'icenox-redirects-admin',
+			'icenox_redirects_settings_section'
 		);
 
 		register_setting(
-			'icenox_redirects_option_group', // option_group
-			'icenox_bulk_redirects_path_list', // option_name
+			'icenox_redirects_option_group',
+			'icenox_bulk_redirects_path_list',
 			[
 				'type'              => 'string',
 				'sanitize_callback' => [ $this, "add_new_path_callback" ],
@@ -183,13 +205,13 @@ class IceNoxBulkRedirects {
 			"add-new-path",
 			"Add new Path",
 			[ $this, 'add_new_path_input' ],
-			'icenox-redirects-admin', // page
-			'icenox_redirects_settings_section' //section
+			'icenox-redirects-admin',
+			'icenox_redirects_settings_section'
 		);
 
 		register_setting(
-			'icenox_redirects_option_group', // option_group
-			'icenox_bulk_redirects_remove_path', // option_name
+			'icenox_redirects_option_group',
+			'icenox_bulk_redirects_remove_path',
 			[
 				'type'              => 'int',
 				'sanitize_callback' => [ $this, "remove_path_callback" ],
@@ -209,6 +231,24 @@ class IceNoxBulkRedirects {
         <input id="icenox-bulk-redirects-enabled" name="icenox_bulk_redirects_enabled"
                type="checkbox" value="on" <?php echo $enabled ? "checked" : ""; ?>>
 		<?php endif;
+	}
+
+	public function status_code_selection(): void {
+		$redirectUrl = $this->redirect_url;
+        ?>
+        <label class="input-label sr-only" for="icenox-bulk-redirects-status-code">Status Code</label>
+        <select id="icenox-bulk-redirects-status-code" name="icenox_bulk_redirects_status_code">
+            <?php
+            foreach ($this->status_code_options as $status_code) {
+                if($this->status_code === $status_code) {
+	                echo '<option value="' . $status_code . '" selected>' . $status_code . '</option>';
+                } else {
+	                echo '<option value="' . $status_code . '">' . $status_code . '</option>';
+                }
+            }
+            ?>
+        </select>
+		<?php
 	}
 
 	public function redirect_url_input(): void {
@@ -236,6 +276,14 @@ class IceNoxBulkRedirects {
 			return filter_var( $value, FILTER_VALIDATE_URL ) ? $value : "";
 		} else {
 			return $this->redirect_url;
+		}
+	}
+
+	public function status_code_callback( $value ): string {
+		if ( isset( $value ) ) {
+			return in_array($value, $this->status_code_options) ? $value : 302;
+		} else {
+			return $this->status_code;
 		}
 	}
 
