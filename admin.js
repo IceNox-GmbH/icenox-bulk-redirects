@@ -1,12 +1,4 @@
 "use strict";
-document.querySelectorAll(".icenox-bulk-redirects .remove-button").forEach(button => {
-   button.addEventListener("click", () => {
-      if(button.dataset.pathKey) {
-         removeAddedPathByKey(button.dataset.pathKey, button.dataset.wpnonce);
-      }
-   });
-});
-
 const removeAddedPathByKey = (key, wpnonce) => {
    const form = document.createElement("form");
    form.method = "post";
@@ -20,11 +12,11 @@ const removeAddedPathByKey = (key, wpnonce) => {
       "_wp_http_referer": document.location.pathname + document.location.search
    };
 
-   Object.keys(params).forEach(key => {
+   Object.keys(params).forEach(paramKey => {
       const field = document.createElement("input");
       field.type = "hidden";
-      field.name = key;
-      field.value = params[key];
+      field.name = paramKey;
+      field.value = params[paramKey];
 
       form.appendChild(field);
    });
@@ -32,3 +24,11 @@ const removeAddedPathByKey = (key, wpnonce) => {
    document.body.appendChild(form);
    form.submit();
 }
+
+document.querySelectorAll(".icenox-bulk-redirects .remove-button").forEach(button => {
+   button.addEventListener("click", () => {
+      if(button.dataset.pathKey) {
+         removeAddedPathByKey(button.dataset.pathKey, button.dataset.wpnonce);
+      }
+   });
+});
