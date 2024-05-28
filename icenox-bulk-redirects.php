@@ -1,13 +1,15 @@
 <?php
 /**
- * Plugin Name: IceNox Bulk Redirects
- * Description: Redirect multiple pages to a single page.
- * Version: 2.1
- * Requires at least: 6.2
- * Requires PHP: 8.0
- * Author: IceNox GmbH
- * Author URI: https://icenox.com
- * Licence: None
+ * Plugin Name:         IceNox Bulk Redirects
+ * Description:         Redirect multiple pages to a single page.
+ * Version:             2.1
+ * Requires at least:   6.2
+ * Requires PHP:        8.0
+ * Author:              IceNox GmbH
+ * Author URI:          https://icenox.com
+ * Licence:             GPLv3
+ * License URI:         https://www.gnu.org/licenses/gpl-3.0
+ * Text Domain:         icenox-bulk-redirects
  */
 
 class IceNoxBulkRedirects {
