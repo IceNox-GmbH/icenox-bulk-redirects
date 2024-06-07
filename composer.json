@@ -1,5 +1,5 @@
 {
-  "name": "icenox/icenox-bulk-redirects",
+  "name": "icenox/bulk-redirects",
   "description": "WordPress Plugin to redirect multiple pages (paths) to a single url.",
   "type": "wordpress-plugin",
   "homepage": "https://github.com/IceNox-GmbH/icenox-bulk-redirects",
